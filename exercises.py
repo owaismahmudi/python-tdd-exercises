@@ -3,7 +3,10 @@ def reverse_list(l):
     """
     Reverses order of elements in list l.
     """
-    return None
+    ll=[]
+    for i in range(len(l)-1,-1,-1):
+        ll.append(l[i])
+    return ll
 
 
 def test_reverse_list():
@@ -16,7 +19,8 @@ def reverse_string(s):
     """
     Reverses order of characters in string s.
     """
-    return None
+    ss=''.join(reversed(s))
+    return ss
 
 
 def test_reverse_string():
@@ -30,7 +34,10 @@ def is_english_vowel(c):
     Returns True if c is an english vowel
     and False otherwise.
     """
-    return None
+    if c == 'a' or c == 'e' or c == 'i' or c == 'o' or c == 'u' or c=='A' or c=='E' or c=='I' or c=='O' or c=='U' or c=='Y' or c=='y':
+        return True
+    else:
+        return False
 
 
 def test_is_english_vowel():
@@ -57,7 +64,11 @@ def count_num_vowels(s):
     """
     Returns the number of vowels in a string s.
     """
-    return None
+    count=0
+    for i in range(len(s)):
+        if is_english_vowel(s[i]):
+            count=count+1 
+    return count
 
 
 def test_count_num_vowels():
@@ -79,8 +90,16 @@ def histogram(l):
     """
     Converts a list of integers into a simple string histogram.
     """
-    return None
 
+    li=[]
+    for i in range(len(l)):
+        for j in range(l[i]):
+            li.append('#')
+        li.append('\n')
+
+    str=''.join(li[:len(li)-1])
+
+    return str
 
 def test_histogram():
     assert histogram([2, 5, 1]) == '##\n#####\n#'
@@ -93,7 +112,11 @@ def get_word_lengths(s):
     Returns a list of integers representing
     the word lengths in string s.
     """
-    return None
+    li=[]
+    str=s.split(' ')
+    for i in range(len(str)):
+        li.append(len(str[i]))
+    return li
 
 
 def test_get_word_lengths():
@@ -108,7 +131,13 @@ def find_longest_word(s):
     Returns the longest word in string s.
     In case there are several, return the first.
     """
-    return None
+    arr=get_word_lengths(s)
+    max=0
+    for i in range(len(arr)):
+        if arr[max] < arr[i]:
+            max=i
+    str=s.split(' ')
+    return str[max]
 
 
 def test_find_longest_word():
@@ -125,7 +154,11 @@ def validate_dna(s):
     Return True if the DNA string only contains characters
     a, c, t, or g (lower or uppercase). False otherwise.
     """
-    return None
+    for i in range(len(s)):
+        if s[i] == 'a' or s[i] == 'c' or s[i] == 'g' or s[i] == 't' or s[i] == 'A' or s[i] == 'C' or s[i] == 'G' or s[i] == 'T':
+            return True
+        else:
+            return False
 
 
 def test_validate_dna():
@@ -141,8 +174,17 @@ def base_pair(c):
     of the base pair. If the base is not recognized,
     return 'unknown'.
     """
-    return None
-
+    if not validate_dna(c):
+        return 'unknown'
+    else:
+        if c.lower() == 'a':
+            return 't'
+        elif c.lower() == 'c':
+            return 'g'
+        elif c.lower() == 'g':
+            return 'c'
+        elif c.lower() == 't':
+            return 'a'
 
 def test_base_pair():
     assert base_pair('a') == 't'
