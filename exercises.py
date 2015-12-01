@@ -175,16 +175,17 @@ def base_pair(c):
     return 'unknown'.
     """
     if not validate_dna(c):
-        return 'unknown'
+        c='unknown'
     else:
         if c.lower() == 'a':
-            return 't'
+            c='t'
         elif c.lower() == 'c':
-            return 'g'
+            c='g'
         elif c.lower() == 'g':
-            return 'c'
+            c='c'
         elif c.lower() == 't':
-            return 'a'
+            c='a'
+    return c
 
 def test_base_pair():
     assert base_pair('a') == 't'
@@ -206,7 +207,9 @@ def transcribe_dna_to_rna(s):
     Return string s with each letter T replaced by U.
     Result is always uppercase.
     """
-    return None
+    s=s.replace('T','U')
+    s=s.replace('t','U')
+    return s.upper()
 
 
 def test_transcribe_dna_to_rna():
@@ -221,8 +224,13 @@ def get_complement(s):
     Return the DNA complement in uppercase
     (A -> T, T-> A, C -> G, G-> C).
     """
-    return None
+    sx=[]
+    for i in range(len(s)):
+        sx.append(base_pair(s[i]).upper())
 
+    print(sx)
+    c=''.join(sx)
+    return c
 
 def test_get_complement():
     assert get_complement('CCGGAAGAGCTTACTTAG') == 'GGCCTTCTCGAATGAATC'
@@ -236,7 +244,7 @@ def get_reverse_complement(s):
     Return the reverse complement of string s
     (complement reversed in order).
     """
-    return None
+    return ''.join(reversed(get_complement(s)[:]))
 
 
 def test_get_reverse_complement():
@@ -250,8 +258,8 @@ def remove_substring(substring, string):
     """
     Returns string with all occurrences of substring removed.
     """
-    return None
-
+    string=string.replace(substring,"")
+    return string
 
 def test_remove_substring():
     assert remove_substring('GAA', 'CCGGAAGAGCTTACTTAG') == 'CCGGAGCTTACTTAG'
@@ -268,8 +276,13 @@ def get_position_indices(triplet, dna):
     in a DNA sequence. We start counting from 0
     and jump by 3 characters from one position to the next.
     """
-    return None
-
+    n=3
+    rli=[]
+    li=[dna[i:i+n] for i in range(0,len(dna),n)]
+    for j in range(len(li)):
+        if li[j] == triplet:
+            rli.append(j)
+    return rli
 
 def test_get_position_indices():
     assert get_position_indices('GAA', 'CCGGAAGAGCTTACTTAG') == [1]
@@ -277,6 +290,20 @@ def test_get_position_indices():
 
 
 # ------------------------------------------------------------------------------
+ 
+def get_position_indices(triplet, dna, n):
+    """
+    Returns list of position indices for a specific triplet (3-mer)
+    in a DNA sequence. We start counting from 0
+    and jump by 3 characters from one position to the next.
+    """
+    sizeOfTriplet=len(triplet)
+    rli=[]
+    li=[dna[i:i+sizeOfTriplet] for i in range(0,len(dna),n)]
+    for j in range(len(li)):
+        if li[j] == triplet:
+            rli.append(j)
+    return rli
 
 def get_3mer_usage_chart(s):
     """
@@ -287,7 +314,23 @@ def get_3mer_usage_chart(s):
     The list is alphabetically sorted by the name
     of the 3-mer.
     """
-    return None
+    n=3
+    li=[]
+    for i in range(len(s)-2):
+        kmer=s[i:i+n]
+        flagFound=False
+        indices=get_position_indices(kmer,s,1)
+        if li == []:
+            li.append((kmer, len(indices)))
+        else:
+            for j in range(len(li)):
+                if kmer == li[j][0]:
+                    flagFound=True
+            if not flagFound:
+                li.append((kmer, len(indices)))
+    l=sorted(li, key=lambda tup: tup[0])
+    return(l)
+
 
 
 def test_get_3mer_usage_chart():
@@ -318,7 +361,18 @@ def read_column(file_name, column_number):
     Reads column column_number from file file_name
     and returns the values as floats in a list.
     """
-    return None
+    with open(file_name) as f:
+        content = f.readlines()
+    target=[]
+    for i in range(len(content)):
+        li=content[i]
+        li=li.replace("['","")
+        li=li.replace("]","")
+        li=li.replace("\n", "")
+        li=li.split('  ')
+        if len(li) > 1:
+            target.append(round(float(li[column_number-1]),3))
+    return target
 
 
 def test_read_column():
@@ -357,7 +411,21 @@ def character_statistics(file_name):
     Use the isalpha() method to figure out
     whether the character is in the alphabet.
     """
-    return None
+    with open(file_name) as f:
+        content = f.readlines()
+    regis={}
+    for i in range(len(content)):
+        line=content[i].replace("\n", "")
+        line=line.lower()
+        for j in range(len(line)):
+            ch=line[j]
+            if ch.isalpha():
+                if ch not in regis:
+                    regis[ch]=1
+                else:
+                    regis[ch]=regis[ch]+1
+    regis=sorted(regis.items(), key=lambda x: x[1])
+    return (regis[-1][0],regis[0][0])
 
 
 def test_character_statistics():
